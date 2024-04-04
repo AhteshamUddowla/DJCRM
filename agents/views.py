@@ -18,7 +18,6 @@ class AgentListView(OrganiserAndLoginRequiredMixin, generic.ListView):
         organization = self.request.user.userprofile
         return Agent.objects.filter(organization=organization)
 
-
 class AgentCreateView(OrganiserAndLoginRequiredMixin, generic.CreateView):
     template_name = 'agents/agent_create.html'
     form_class = AgentModelForm
