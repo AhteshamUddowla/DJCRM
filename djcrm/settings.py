@@ -32,6 +32,8 @@ INSTALLED_APPS = [
     # Third party apps
     'crispy_forms',
     "crispy_tailwind",
+    'tailwind',
+    'theme',
 
     # Local apps
     'leads.apps.LeadsConfig',
@@ -189,3 +191,5 @@ LOGGING = {
     },
 }
 
+TAILWIND_APP_NAME = 'theme'
+NPM_BIN_PATH = "D:\\Program Files\\nodejs\\npm.cmd"
