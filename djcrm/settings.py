@@ -140,12 +140,16 @@ STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
 AUTH_USER_MODEL = 'leads.User'
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
-LOGIN_REDIRECT_URL = '/leads'
-LOGIN_URL = '/login'
+# Built-in LoginView redirects to '/accounts/profile/' by default, but we're customizing it to redirect authenticated users to '/leads'.
+LOGIN_REDIRECT_URL = '/leads' 
+# Redirect unauthenticated users to '/login' if they attempt to access a protected resource without being logged in. (LoginRequiredMixin)
+LOGIN_URL = '/login' 
+# After logging out, redirect users to the homepage ('/').
 LOGOUT_REDIRECT_URL = '/'
 
 CRISPY_ALLOWED_TEMPLATE_PACKS = "tailwind"
 CRISPY_TEMPLATE_PACK = 'tailwind'
+<<<<<<< HEAD
 
 if not DEBUG:
     SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
@@ -169,3 +173,5 @@ if not DEBUG:
     EMAIL_PORT = env("EMAIL_PORT")
     DEFAULT_FROM_EMAIL = env("DEFAULT_FROM_EMAIL")
     
+=======
+>>>>>>> dc39121b8c45ac0198d682021eacb112394e9be4
