@@ -7,8 +7,8 @@ from django.db.models.query import QuerySet
 from django.shortcuts import render, redirect, reverse
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views import generic
-from .models import Lead, Agent, Category
-from .forms import LeadModelForm, CustomUserCreationForm, AssignAgentForm, LeadCategoryUpdateForm, CategoryModelForm
+from .models import Lead, Agent, Category, FollowUp
+from .forms import LeadModelForm, CustomUserCreationForm, AssignAgentForm, LeadCategoryUpdateForm, CategoryModelForm, FollowUpModelForm
 from agents.mixins import OrganiserAndLoginRequiredMixin
 
 logger = logging.getLogger(__name__)
@@ -240,6 +240,63 @@ class LeadCategoryUpdateView(LoginRequiredMixin, generic.UpdateView):
     def get_success_url(self):
         return reverse("leads:lead-detail", kwargs={"pk": self.get_object().id})
 
+class FollowUpCreateView(LoginRequiredMixin, generic.CreateView):
+    template_name = "leads/followup_create.html"
+    form_class = FollowUpModelForm
+
+    def get_success_url(self):
+        return reverse("leads:lead-detail", kwargs={"pk": self.kwargs["pk"]})
+
+    def get_context_data(self, **kwargs):
+        context = super(FollowUpCreateView, self).get_context_data(**kwargs)
+        context.update({
+            "lead": Lead.objects.get(pk=self.kwargs["pk"])
+        })
+        return context
+
+    def form_valid(self, form):
+        lead = Lead.objects.get(pk=self.kwargs["pk"])
+        followup = form.save(commit=False)
+        followup.lead = lead
+        followup.save()
+        return super(FollowUpCreateView, self).form_valid(form)
+
+class FollowUpUpdateView(LoginRequiredMixin, generic.UpdateView):
+    template_name = "leads/followup_update.html"
+    form_class = FollowUpModelForm
+
+    def get_queryset(self):
+        user = self.request.user
+        # initial queryset of leads for the entire organisation
+        if user.is_organizer:
+            queryset = FollowUp.objects.filter(lead__organization=user.userprofile)
+        else:
+            queryset = FollowUp.objects.filter(lead__organization=user.agent.organisation)
+            # filter for the agent that is logged in
+            queryset = queryset.filter(lead__agent__user=user)
+        return queryset
+
+    def get_success_url(self):
+        return reverse("leads:lead-detail", kwargs={"pk": self.get_object().lead.id})
+
+class FollowUpDeleteView(OrganiserAndLoginRequiredMixin, generic.DeleteView):
+    template_name = "leads/followup_delete.html"
+
+    def get_success_url(self):
+        followup = FollowUp.objects.get(id=self.kwargs["pk"])
+        return reverse("leads:lead-detail", kwargs={"pk": followup.lead.pk})
+
+    def get_queryset(self):
+        user = self.request.user
+        # initial queryset of leads for the entire organisation
+        if user.is_organizer:
+            queryset = FollowUp.objects.filter(lead__organization=user.userprofile)
+        else:
+            queryset = FollowUp.objects.filter(lead__organization=user.agent.organisation)
+            # filter for the agent that is logged in
+            queryset = queryset.filter(lead__agent__user=user)
+        return queryset
+            
 class LeadJsonView(generic.View):
 
     def get(self, request, *args, **kwargs):
