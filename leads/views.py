@@ -1,3 +1,4 @@
+import logging
 from typing import Any
 from django.contrib import messages
 from django.core.mail import send_mail
@@ -10,6 +11,7 @@ from .models import Lead, Agent, Category
 from .forms import LeadModelForm, CustomUserCreationForm, AssignAgentForm, LeadCategoryUpdateForm, CategoryModelForm
 from agents.mixins import OrganiserAndLoginRequiredMixin
 
+logger = logging.getLogger(__name__)
 
 class SignupView(generic.CreateView):
     template_name = "registration/signup.html"
