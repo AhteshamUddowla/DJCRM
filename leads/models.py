@@ -13,6 +13,10 @@ class UserProfile(models.Model):
     def __str__(self):
         return self.user.username
 
+class LeadManager(models.Manager):
+    def get_queryset(self):
+        return super().get_queryset()
+    
 class Lead(models.Model):
     first_name = models.CharField(max_length=20)
     last_name = models.CharField(max_length=20)
@@ -25,6 +29,8 @@ class Lead(models.Model):
     phone_number = models.CharField(max_length=20)
     email = models.EmailField()
 
+    objects = LeadManager()
+    
     def __str__(self):
         return f"{self.first_name} {self.last_name}"
     
