@@ -7,13 +7,13 @@
         <div class="w-full mb-6 py-6 flex justify-between items-center border-b border-gray-200">
             <div>
                 <h1 class="text-4xl text-gray-800">Leads</h1>
-                <a class="text-gray-500 text-blue-500" href="{% url 'leads:category-list' %}">
+                <a class="text-blue-500" href="{% url 'leads:category-list' %}">
                     View categories
                 </a>
             </div>
             {% if request.user.is_organizer %}
             <div>
-                <a class="text-gray-500 text-blue-500" href="{% url 'leads:lead-create' %}">
+                <a class="text-blue-500" href="{% url 'leads:lead-create' %}">
                     Create a new lead
                 </a>
             </div>
@@ -113,7 +113,8 @@
                         </div>
                         <div class="flex-grow">
                             <h2 class="text-gray-900 text-lg title-font font-medium mb-3">
-                                {{ lead.first_name }} {{ lead.last_name }}
+                                <a href="{% url 'leads:lead-update' lead.pk %}">{{ lead.first_name }} {{ lead.last_name }}</a>
+                                
                             </h2>
                             <p class="leading-relaxed text-base">
                                 {{ lead.description }}
